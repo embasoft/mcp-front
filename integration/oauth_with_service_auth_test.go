@@ -28,6 +28,11 @@ func TestOAuthWithServiceAuth(t *testing.T) {
 		},
 	)
 	startMCPFront(t, writeTestConfig(t, cfg),
+		"JWT_SECRET=test-jwt-secret-32-bytes-exactly!",
+		"ENCRYPTION_KEY=test-encryption-key-32-bytes-ok!",
+		"GOOGLE_CLIENT_ID=test-client-id-for-oauth",
+		"GOOGLE_CLIENT_SECRET=test-client-secret-for-oauth",
+		"MCP_FRONT_ENV=development",
 		"SVC_PASSWORD=svcpass789",
 	)
 
@@ -94,5 +99,24 @@ func TestOAuthWithServiceAuth(t *testing.T) {
 		defer resp.Body.Close()
 
 		assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
+	})
+
+	t.Run("valid OAuth bearer token still works alongside serviceAuths", func(t *testing.T) {
+		// Mint a real OAuth access token via the test IDP and confirm
+		// ServiceAuth doesn't inadvertently block it. This is the symmetric
+		// case to the basic/bearer-service-auth tests above.
+		accessToken := getOAuthAccessToken(t, "http://localhost:8080/postgres")
+
+		req, err := http.NewRequest("GET", "http://localhost:8080/postgres/sse", nil)
+		require.NoError(t, err)
+		req.Header.Set("Authorization", "Bearer "+accessToken)
+		req.Header.Set("Accept", "text/event-stream")
+
+		resp, err := http.DefaultClient.Do(req)
+		require.NoError(t, err)
+		defer resp.Body.Close()
+
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
+		assert.Equal(t, "text/event-stream", resp.Header.Get("Content-Type"))
 	})
 }
