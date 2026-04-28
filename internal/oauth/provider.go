@@ -11,6 +11,7 @@ import (
 	"github.com/stainless-api/mcp-front/internal/crypto"
 	jsonwriter "github.com/stainless-api/mcp-front/internal/json"
 	"github.com/stainless-api/mcp-front/internal/log"
+	"github.com/stainless-api/mcp-front/internal/servicecontext"
 )
 
 const userContextKey contextKey = "user_email"
@@ -54,6 +55,16 @@ func NewValidateTokenMiddleware(authServer *AuthorizationServer, issuer string, 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
+
+			// If service auth already authenticated this request (via Bearer token
+			// or Basic credentials matching `serviceAuths` on the per-server
+			// middleware that runs before this one), skip OAuth validation.
+			// Otherwise an Authorization: Basic header — valid for serviceAuths —
+			// would be rejected here for not being Bearer.
+			if _, ok := servicecontext.GetAuthInfo(ctx); ok {
+				next.ServeHTTP(w, r)
+				return
+			}
 
 			serviceName := ExtractServiceNameFromPath(r.URL.Path, issuer)
 			metadataURI := ""
