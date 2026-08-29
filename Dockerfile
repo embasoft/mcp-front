@@ -41,7 +41,7 @@ COPY config-production.json ./config-template.json
 
 # Generate config at startup: substitute ${VAR} placeholders from environment
 # (used for the bearer service token; avoids baking secrets into the image)
-CMD ["sh", "-c", "sed 's|\\${HERMES_SPLID_TOKEN}|'\"$HERMES_SPLID_TOKEN\"'|g' config-template.json > config.json && exec ./mcp-front -config config.json"]
+CMD ["sh", "-c", "sed 's|\\${HERMES_SPLID_TOKEN}|'\"$HERMES_SPLID_TOKEN\"'|g' config-template.json > /tmp/config.json && exec ./mcp-front -config /tmp/config.json"]
 
 # Change ownership
 RUN chown -R mcp:mcp /app
@@ -55,6 +55,3 @@ EXPOSE 8080
 # Health check using existing /health endpoint
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
-
-# Run the application
-CMD ["./mcp-front", "-config", "config.json"]
