@@ -37,7 +37,7 @@ WORKDIR /app
 COPY --from=builder /app/mcp-front .
 
 # Copy default config
-COPY config-oauth.example.json ./config.json
+COPY config-production.json ./config.json
 
 # Change ownership
 RUN chown -R mcp:mcp /app

@@ -1,0 +1,31 @@
+{
+  "version": "v0.0.1-DEV_EDITION_EXPECT_CHANGES",
+  "proxy": {
+    "name": "emba MCP Gateway",
+    "baseURL": "https://mcp.emba-it.de",
+    "addr": ":8080",
+    "auth": {
+      "kind": "oauth",
+      "issuer": "https://mcp.emba-it.de",
+      "idp": {
+        "provider": "google",
+        "clientId": { "$env": "GOOGLE_CLIENT_ID" },
+        "clientSecret": { "$env": "GOOGLE_CLIENT_SECRET" },
+        "redirectUri": "https://mcp.emba-it.de/oauth/callback"
+      },
+      "allowedDomains": ["gmail.com"],
+      "allowedOrigins": ["https://grok.com", "https://claude.ai"],
+      "allowedRedirectUriHosts": ["https://grok.com", "https://claude.ai", "https://chatgpt.com", "http://localhost", "http://127.0.0.1"],
+      "tokenTtl": "24h",
+      "storage": "memory",
+      "jwtSecret": { "$env": "MCP_JWT_SECRET" },
+      "encryptionKey": { "$env": "MCP_ENCRYPTION_KEY" }
+    }
+  },
+  "mcpServers": {
+    "splid": {
+      "transportType": "streamable-http",
+      "url": "http://splid-mcp:8080/mcp"
+    }
+  }
+}
