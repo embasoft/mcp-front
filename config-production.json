@@ -25,7 +25,14 @@
   "mcpServers": {
     "splid": {
       "transportType": "streamable-http",
-      "url": "http://splid-mcp:8080/mcp"
+      "url": "http://splid-mcp:8080/mcp",
+      "serviceAuths": [
+        {
+          "type": "bearer",
+          "name": "hermes",
+          "tokens": [{ "$env": "HERMES_SPLID_TOKEN" }]
+        }
+      ]
     }
   }
 }
