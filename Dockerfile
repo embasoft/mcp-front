@@ -36,8 +36,12 @@ WORKDIR /app
 # Copy the binary from builder stage
 COPY --from=builder /app/mcp-front .
 
-# Copy default config
-COPY config-production.json ./config.json
+# Copy default config template
+COPY config-production.json ./config-template.json
+
+# Generate config at startup: substitute ${VAR} placeholders from environment
+# (used for the bearer service token; avoids baking secrets into the image)
+CMD ["sh", "-c", "sed 's|\\${HERMES_SPLID_TOKEN}|'\"$HERMES_SPLID_TOKEN\"'|g' config-template.json > config.json && exec ./mcp-front -config config.json"]
 
 # Change ownership
 RUN chown -R mcp:mcp /app

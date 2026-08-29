@@ -9,17 +9,36 @@
       "issuer": "https://mcp.emba-it.de",
       "idp": {
         "provider": "google",
-        "clientId": { "$env": "GOOGLE_CLIENT_ID" },
-        "clientSecret": { "$env": "GOOGLE_CLIENT_SECRET" },
+        "clientId": {
+          "$env": "GOOGLE_CLIENT_ID"
+        },
+        "clientSecret": {
+          "$env": "GOOGLE_CLIENT_SECRET"
+        },
         "redirectUri": "https://mcp.emba-it.de/oauth/callback"
       },
-      "allowedDomains": ["gmail.com"],
-      "allowedOrigins": ["https://grok.com", "https://claude.ai"],
-      "allowedRedirectUriHosts": ["https://grok.com", "https://claude.ai", "https://chatgpt.com", "http://localhost", "http://127.0.0.1"],
+      "allowedDomains": [
+        "gmail.com"
+      ],
+      "allowedOrigins": [
+        "https://grok.com",
+        "https://claude.ai"
+      ],
+      "allowedRedirectUriHosts": [
+        "https://grok.com",
+        "https://claude.ai",
+        "https://chatgpt.com",
+        "http://localhost",
+        "http://127.0.0.1"
+      ],
       "tokenTtl": "24h",
       "storage": "memory",
-      "jwtSecret": { "$env": "MCP_JWT_SECRET" },
-      "encryptionKey": { "$env": "MCP_ENCRYPTION_KEY" }
+      "jwtSecret": {
+        "$env": "MCP_JWT_SECRET"
+      },
+      "encryptionKey": {
+        "$env": "MCP_ENCRYPTION_KEY"
+      }
     }
   },
   "mcpServers": {
@@ -30,7 +49,9 @@
         {
           "type": "bearer",
           "name": "hermes",
-          "tokens": [{ "$env": "HERMES_SPLID_TOKEN" }]
+          "tokens": [
+            "${HERMES_SPLID_TOKEN}"
+          ]
         }
       ]
     }
